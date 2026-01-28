@@ -2,6 +2,6 @@ public class InterestEntity : Entity
 {
     public string Name { get; set; }
     public string Description { get; set; }
-    public ICollection<ParticipiantEntity> Partisipants { get; set; }
+    public ICollection<ParticipantEntity> Partisipants { get; set; }
     public ICollection<EventEntity> Events { get; set; }
 }

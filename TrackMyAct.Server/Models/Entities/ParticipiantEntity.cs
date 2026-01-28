@@ -1,4 +1,4 @@
-public class ParticipiantEntity : UserEntity
+public class ParticipantEntity : UserEntity
 {
     public DateTime BirthdayDate { get; set; }
     public string Phone { get; set; }
