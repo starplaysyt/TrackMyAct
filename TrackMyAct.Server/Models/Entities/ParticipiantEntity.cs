@@ -10,4 +10,5 @@ public class ParticipantEntity : UserEntity
     public ICollection<EventEntity> ArchiveEvents { get; set; }
     public ICollection<EventEntity> ParticipantRequests { get; set; }
     public ICollection<EventEntity> OrganizerRequests { get; set; }
+    public ICollection<OrganizerEntity> OrganizerSubscriptions { get; set; }
 }
