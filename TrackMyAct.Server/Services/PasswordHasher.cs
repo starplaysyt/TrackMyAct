@@ -28,8 +28,3 @@ public class PasswordHasher
     }
 
 }
-
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Components.Forms.Mapping;
-using Microsoft.AspNetCore.Mvc;
