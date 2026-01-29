@@ -1,3 +1,5 @@
+namespace TrackMyAct.Server.Models.Entities;
+
 public class OrganizerEntity : UserEntity
 {
     public string Organization { get; set; }

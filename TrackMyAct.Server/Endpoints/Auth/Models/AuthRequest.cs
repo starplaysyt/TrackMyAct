@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+namespace TrackMyAct.Server.Endpoints.Auth.Models;
+
 public class AuthRequest
 {
     [Required, MinLength(3)]

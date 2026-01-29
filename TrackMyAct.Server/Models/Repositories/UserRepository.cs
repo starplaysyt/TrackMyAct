@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using TrackMyAct.Server.Models.Entities;
+
+namespace TrackMyAct.Server.Models.Repositories;
 
 public class UserRepository
 {
@@ -9,7 +12,11 @@ public class UserRepository
         _dbContext = dbContext;
     }
 
-    public async Task<UserEntity> GetByUsername(string username) =>
+    /// <summary>
+    /// Gets UserEntity instance by username.
+    /// </summary>
+    /// <returns> UserEntity instance if the instance found, null if there is no such. </returns>
+    public async Task<UserEntity?> GetByUsername(string username) =>
         await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
 
     public async Task Change(UserEntity user)
@@ -27,14 +34,18 @@ public class UserRepository
     public async Task DeleteById(int id)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
-
-        _dbContext.Users.Remove(user);
+        
+        if (user is not null)
+            _dbContext.Users.Remove(user);
     }
 
-    public async Task<UserEntity> GetById(int id) =>
+    /// <summary>
+    /// Gets UserEntity instance by id.
+    /// </summary>
+    /// <returns> UserEntity instance if the instance found, null if there is no such. </returns>
+    public async Task<UserEntity?> GetById(int id) =>
         await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
-
+    
     public async Task<List<UserEntity>> GetList() =>
         await _dbContext.Users.ToListAsync();
 }
-

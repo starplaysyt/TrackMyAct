@@ -1,3 +1,5 @@
+namespace TrackMyAct.Server.Models.Entities;
+
 public class CommentEntity : Entity
 {
     public string Text { get; set; }

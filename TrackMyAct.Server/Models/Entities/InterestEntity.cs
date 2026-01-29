@@ -1,3 +1,5 @@
+namespace TrackMyAct.Server.Models.Entities;
+
 public class InterestEntity : Entity
 {
     public string Name { get; set; }

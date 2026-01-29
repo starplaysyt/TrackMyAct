@@ -1,4 +1,8 @@
 using FastEndpoints;
+using TrackMyAct.Server.Endpoints.Auth.Models;
+using TrackMyAct.Server.Services;
+
+namespace TrackMyAct.Server.Endpoints.Auth.RegisterUser;
 
 public class RegisterUserEndpoint : Endpoint<AuthRequest, AuthResponse>
 {

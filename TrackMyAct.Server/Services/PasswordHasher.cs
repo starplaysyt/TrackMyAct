@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
 using Isopoh.Cryptography.Argon2;
 
+namespace TrackMyAct.Server.Services;
+
 public class PasswordHasher
 {
     public string CreatePasswordHash(string password)
@@ -22,9 +24,6 @@ public class PasswordHasher
         return passwordHash;
     }
 
-    public bool VerifyPassword(string hashedPassword, string providedPassword)
-    {
-        return Argon2.Verify(hashedPassword, providedPassword);
-    }
-
+    public bool VerifyPassword(string hashedPassword, string providedPassword) =>
+        Argon2.Verify(hashedPassword, providedPassword);
 }

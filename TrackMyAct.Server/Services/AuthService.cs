@@ -1,5 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using TrackMyAct.Server.Models.Entities;
+using TrackMyAct.Server.Models.Repositories;
+
+namespace TrackMyAct.Server.Services;
 
 public class AuthService
 {
@@ -21,12 +25,12 @@ public class AuthService
     {
         var isExisting = await _userRepository.GetByUsername(username) != null;
 
-        if(isExisting)
+        if (isExisting)
             throw new Exception("Username is already exist!");
 
         var passwordHash = _hasher.CreatePasswordHash(password);
 
-        UserEntity user = new UserEntity
+        var user = new UserEntity
         {
             Username = username,
             PasswordHash = passwordHash,
@@ -37,18 +41,17 @@ public class AuthService
 
     public async Task<bool> LoginAsync(string username, string password, HttpContext context)
     {
-        UserEntity user = await _userRepository.GetByUsername(username);
-        if(user == null)
+        var user = await _userRepository.GetByUsername(username);
+        if (user is null) 
             return false;
 
-
-        if(!_hasher.VerifyPassword(user.PasswordHash, password))
+        if (!_hasher.VerifyPassword(user.PasswordHash, password))
             return false;
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
+            new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (ClaimTypes.Name, user.Username),
         };
 
         var identity = new ClaimsIdentity(claims, "Cookies");
@@ -64,10 +67,10 @@ public class AuthService
         await contexts.SignOutAsync("Cookies");
     }
 
-    public async Task<UserEntity> GetCurrentUser()
+    public async Task<UserEntity?> GetCurrentUser()
     {
         var user = _httpContextAccessor.HttpContext?.User;
-        if (user == null || !user.Identity.IsAuthenticated)
+        if (user?.Identity is null || !user.Identity.IsAuthenticated)
             throw new Exception("UserEntity is not authenticated");
 
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
@@ -80,17 +83,18 @@ public class AuthService
         return await _userRepository.GetById(userId);
     }
 
-    public async Task<int> GetCurrentUserId()
+    public async Task<int?> GetCurrentUserId()
     {
         var user = _httpContextAccessor.HttpContext?.User;
-        if(user == null || !user.Identity.IsAuthenticated)
+        
+        if (user?.Identity is null || !user.Identity.IsAuthenticated)
             throw new Exception("UserEntity is not authenticated");
 
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-        if(userIdClaim == null)
+        if (userIdClaim == null)
             throw new Exception("UserEntity ID claim not found");
 
-        if(!int.TryParse(userIdClaim.Value, out var userId))
+        if (!int.TryParse(userIdClaim.Value, out var userId))
             throw new Exception($"Invalid user id claim: {userIdClaim.Value}");
 
         return userId;

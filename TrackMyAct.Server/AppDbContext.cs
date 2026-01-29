@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using TrackMyAct.Server.Models.Entities;
+
+namespace TrackMyAct.Server;
 
 public class AppDbContext : DbContext
 {
@@ -15,8 +18,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<UserEntity>(entity =>
         {
             entity.HasDiscriminator<string>("UserType")
-                  .HasValue<ParticipantEntity>("Participant")
-                  .HasValue<OrganizerEntity>("Organizer");
+                .HasValue<ParticipantEntity>("Participant")
+                .HasValue<OrganizerEntity>("Organizer");
         });
 
         modelBuilder.Entity<ParticipantEntity>(entity =>

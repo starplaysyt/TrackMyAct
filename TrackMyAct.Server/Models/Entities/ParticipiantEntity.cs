@@ -1,3 +1,5 @@
+namespace TrackMyAct.Server.Models.Entities;
+
 public class ParticipantEntity : UserEntity
 {
     public DateTime BirthdayDate { get; set; }

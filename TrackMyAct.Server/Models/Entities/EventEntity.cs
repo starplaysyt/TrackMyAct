@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
+namespace TrackMyAct.Server.Models.Entities;
 
 public class EventEntity : Entity
 {
