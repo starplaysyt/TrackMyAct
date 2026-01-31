@@ -21,7 +21,7 @@ public class AuthService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task RegisterAsync(string username, string password)
+    public async Task RegisterAsync(string username, string email, string password, string name, string phone, DateTime birthday)
     {
         var isExisting = await _userRepository.GetByUsername(username) != null;
 
@@ -33,7 +33,11 @@ public class AuthService
         var user = new UserEntity
         {
             Username = username,
+            Name = name,
             PasswordHash = passwordHash,
+            Email = email,
+            Phone = phone, 
+            BirthDate = birthday
         };
 
         await _userRepository.Create(user);

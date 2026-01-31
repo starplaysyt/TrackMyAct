@@ -1,10 +1,9 @@
 using FastEndpoints;
-using TrackMyAct.Server.Endpoints.Auth.Models;
 using TrackMyAct.Server.Services;
 
 namespace TrackMyAct.Server.Endpoints.Auth.RegisterUser;
 
-public class RegisterUserEndpoint : Endpoint<AuthRequest, AuthResponse>
+public class RegisterUserEndpoint : Endpoint<RegistrationRequest, RegistrationResponse>
 {
     private readonly AuthService _authService;
 
@@ -19,16 +18,16 @@ public class RegisterUserEndpoint : Endpoint<AuthRequest, AuthResponse>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(AuthRequest req, CancellationToken ct)
+    public override async Task HandleAsync(RegistrationRequest req, CancellationToken ct)
     {
         try
         {
-            await _authService.RegisterAsync(req.Login, req.Password);
-            await Send.OkAsync(new AuthResponse { IsSuccess = true });
+            await _authService.RegisterAsync(req.Login, req.Email, req.Password, req.Name, req.Phone, req.BirthDate);
+            await Send.OkAsync(new RegistrationResponse { IsSuccess = true });
         }
         catch(ArgumentException ex)
         {
-            await Send.ResponseAsync(new AuthResponse { IsSuccess = false, Error = ex.Message});
+            await Send.ResponseAsync(new RegistrationResponse { IsSuccess = false, ErrorMessage = ex.Message});
         }
         catch(Exception)
         {
