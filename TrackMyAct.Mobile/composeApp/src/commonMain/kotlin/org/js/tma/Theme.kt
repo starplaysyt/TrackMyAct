@@ -14,12 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
-import trackmyact.composeapp.generated.resources.Nunito_Black
-import trackmyact.composeapp.generated.resources.Nunito_ExtraBold
-import trackmyact.composeapp.generated.resources.Nunito_Light
-import trackmyact.composeapp.generated.resources.Nunito_Medium
-import trackmyact.composeapp.generated.resources.Nunito_Regular
-import trackmyact.composeapp.generated.resources.Res
+import trackmyact.composeapp.generated.resources.*
 
 val LightColorScheme = lightColorScheme(
     primary = Color(0xFF573139),
