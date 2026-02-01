@@ -4,101 +4,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using TrackMyAct.Server;
 
 #nullable disable
 
 namespace TrackMyAct.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260128193756_Initial")]
-    partial class Initial
+    [Migration("20260131200933_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
-
-            modelBuilder.Entity("CommentEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("EventId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Mark")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("OrganizerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("OrganizerId");
-
-                    b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("EventEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("EventPlaceId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("InterestEntityId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("NeedAcception")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("OrganizerEntityId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("OrganizerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("StartDateTime")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventPlaceId");
-
-                    b.HasIndex("InterestEntityId");
-
-                    b.HasIndex("OrganizerEntityId");
-
-                    b.HasIndex("OrganizerId");
-
-                    b.ToTable("Events");
-                });
 
             modelBuilder.Entity("EventEntityParticipantEntity", b =>
                 {
@@ -160,25 +80,6 @@ namespace TrackMyAct.Server.Migrations
                     b.ToTable("EventOrganizerRequests", (string)null);
                 });
 
-            modelBuilder.Entity("InterestEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Interests");
-                });
-
             modelBuilder.Entity("InterestEntityParticipantEntity", b =>
                 {
                     b.Property<int>("InterestsId")
@@ -209,7 +110,107 @@ namespace TrackMyAct.Server.Migrations
                     b.ToTable("OrganizerSubscriptions", (string)null);
                 });
 
-            modelBuilder.Entity("PlaceEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.CommentEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("EventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Mark")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("OrganizerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("OrganizerId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.EventEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EventPlaceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("InterestEntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("NeedAcception")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("OrganizerEntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrganizerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventPlaceId");
+
+                    b.HasIndex("InterestEntityId");
+
+                    b.HasIndex("OrganizerEntityId");
+
+                    b.HasIndex("OrganizerId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.InterestEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Interests");
+                });
+
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.PlaceEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,17 +237,28 @@ namespace TrackMyAct.Server.Migrations
                     b.ToTable("Places");
                 });
 
-            modelBuilder.Entity("UserEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -268,9 +280,9 @@ namespace TrackMyAct.Server.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("OrganizerEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.OrganizerEntity", b =>
                 {
-                    b.HasBaseType("UserEntity");
+                    b.HasBaseType("TrackMyAct.Server.Models.Entities.UserEntity");
 
                     b.Property<string>("Organization")
                         .IsRequired()
@@ -279,41 +291,123 @@ namespace TrackMyAct.Server.Migrations
                     b.HasDiscriminator().HasValue("Organizer");
                 });
 
-            modelBuilder.Entity("ParticipantEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.ParticipantEntity", b =>
                 {
-                    b.HasBaseType("UserEntity");
+                    b.HasBaseType("TrackMyAct.Server.Models.Entities.UserEntity");
 
                     b.Property<DateTime>("BirthdayDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsVerifed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasDiscriminator().HasValue("Participant");
                 });
 
-            modelBuilder.Entity("CommentEntity", b =>
+            modelBuilder.Entity("EventEntityParticipantEntity", b =>
                 {
-                    b.HasOne("ParticipantEntity", "Author")
+                    b.HasOne("TrackMyAct.Server.Models.Entities.ParticipantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("AcceptedParticipantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackMyAct.Server.Models.Entities.EventEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EventEntityParticipantEntity1", b =>
+                {
+                    b.HasOne("TrackMyAct.Server.Models.Entities.EventEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ArchiveEventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackMyAct.Server.Models.Entities.ParticipantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EventEntityParticipantEntity2", b =>
+                {
+                    b.HasOne("TrackMyAct.Server.Models.Entities.ParticipantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantRequestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackMyAct.Server.Models.Entities.EventEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantRequestsId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EventEntityParticipantEntity3", b =>
+                {
+                    b.HasOne("TrackMyAct.Server.Models.Entities.ParticipantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizerRequestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackMyAct.Server.Models.Entities.EventEntity", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizerRequestsId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InterestEntityParticipantEntity", b =>
+                {
+                    b.HasOne("TrackMyAct.Server.Models.Entities.InterestEntity", null)
+                        .WithMany()
+                        .HasForeignKey("InterestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackMyAct.Server.Models.Entities.ParticipantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OrganizerEntityParticipantEntity", b =>
+                {
+                    b.HasOne("TrackMyAct.Server.Models.Entities.OrganizerEntity", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizerSubscriptionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackMyAct.Server.Models.Entities.ParticipantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("SubscribersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.CommentEntity", b =>
+                {
+                    b.HasOne("TrackMyAct.Server.Models.Entities.ParticipantEntity", "Author")
                         .WithMany("Comments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("EventEntity", "Event")
+                    b.HasOne("TrackMyAct.Server.Models.Entities.EventEntity", "Event")
                         .WithMany()
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("OrganizerEntity", "Organizer")
+                    b.HasOne("TrackMyAct.Server.Models.Entities.OrganizerEntity", "Organizer")
                         .WithMany("Comments")
                         .HasForeignKey("OrganizerId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -325,23 +419,23 @@ namespace TrackMyAct.Server.Migrations
                     b.Navigation("Organizer");
                 });
 
-            modelBuilder.Entity("EventEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.EventEntity", b =>
                 {
-                    b.HasOne("PlaceEntity", "EventPlace")
+                    b.HasOne("TrackMyAct.Server.Models.Entities.PlaceEntity", "EventPlace")
                         .WithMany("Events")
                         .HasForeignKey("EventPlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InterestEntity", null)
+                    b.HasOne("TrackMyAct.Server.Models.Entities.InterestEntity", null)
                         .WithMany("Events")
                         .HasForeignKey("InterestEntityId");
 
-                    b.HasOne("OrganizerEntity", null)
+                    b.HasOne("TrackMyAct.Server.Models.Entities.OrganizerEntity", null)
                         .WithMany("ArchiveEvents")
                         .HasForeignKey("OrganizerEntityId");
 
-                    b.HasOne("OrganizerEntity", "Organizer")
+                    b.HasOne("TrackMyAct.Server.Models.Entities.OrganizerEntity", "Organizer")
                         .WithMany("OrganizedEvents")
                         .HasForeignKey("OrganizerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -352,107 +446,17 @@ namespace TrackMyAct.Server.Migrations
                     b.Navigation("Organizer");
                 });
 
-            modelBuilder.Entity("EventEntityParticipantEntity", b =>
-                {
-                    b.HasOne("ParticipantEntity", null)
-                        .WithMany()
-                        .HasForeignKey("AcceptedParticipantsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EventEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EventEntityParticipantEntity1", b =>
-                {
-                    b.HasOne("EventEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ArchiveEventsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ParticipantEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipantEntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EventEntityParticipantEntity2", b =>
-                {
-                    b.HasOne("ParticipantEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipantRequestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EventEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipantRequestsId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EventEntityParticipantEntity3", b =>
-                {
-                    b.HasOne("ParticipantEntity", null)
-                        .WithMany()
-                        .HasForeignKey("OrganizerRequestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EventEntity", null)
-                        .WithMany()
-                        .HasForeignKey("OrganizerRequestsId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("InterestEntityParticipantEntity", b =>
-                {
-                    b.HasOne("InterestEntity", null)
-                        .WithMany()
-                        .HasForeignKey("InterestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ParticipantEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipantsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OrganizerEntityParticipantEntity", b =>
-                {
-                    b.HasOne("OrganizerEntity", null)
-                        .WithMany()
-                        .HasForeignKey("OrganizerSubscriptionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ParticipantEntity", null)
-                        .WithMany()
-                        .HasForeignKey("SubscribersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("InterestEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.InterestEntity", b =>
                 {
                     b.Navigation("Events");
                 });
 
-            modelBuilder.Entity("PlaceEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.PlaceEntity", b =>
                 {
                     b.Navigation("Events");
                 });
 
-            modelBuilder.Entity("OrganizerEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.OrganizerEntity", b =>
                 {
                     b.Navigation("ArchiveEvents");
 
@@ -461,7 +465,7 @@ namespace TrackMyAct.Server.Migrations
                     b.Navigation("OrganizedEvents");
                 });
 
-            modelBuilder.Entity("ParticipantEntity", b =>
+            modelBuilder.Entity("TrackMyAct.Server.Models.Entities.ParticipantEntity", b =>
                 {
                     b.Navigation("Comments");
                 });
