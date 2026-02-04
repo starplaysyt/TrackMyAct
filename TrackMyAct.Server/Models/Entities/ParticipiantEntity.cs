@@ -4,7 +4,6 @@ public class ParticipantEntity : UserEntity
 {
     public DateTime BirthdayDate { get; set; }
     public string Phone { get; set; }
-    public string Email { get; set; }
     public bool IsVerifed { get; set; }
     public ICollection<InterestEntity> Interests { get; set; }
     public ICollection<EventEntity> Participations { get; set; }

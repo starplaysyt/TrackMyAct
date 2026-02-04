@@ -21,26 +21,50 @@ public class AuthService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task RegisterAsync(string username, string email, string password, string name, string phone, DateTime birthday)
+    public async Task RegisterOrganizerAsync(string username, string email, string password, string name, string organization)
     {
         var isExisting = await _userRepository.GetByUsername(username) != null;
 
-        if (isExisting)
-            throw new Exception("Username is already exist!");
+        if(isExisting)
+           throw new Exception("Organizer is already exist!");
 
         var passwordHash = _hasher.CreatePasswordHash(password);
 
-        var user = new UserEntity
+        var organizer = new OrganizerEntity
         {
+            RoleType = "Organizer",
             Username = username,
             Name = name,
             PasswordHash = passwordHash,
             Email = email,
-            Phone = phone, 
-            BirthDate = birthday
+            Organization = organization
         };
 
-        await _userRepository.Create(user);
+        await _userRepository.Create(organizer);
+    }
+
+    public async Task RegisterParticipantAsync(string username, string password, string name, DateTime birthDate, string phone, string email)
+    {
+        var isExisting = await _userRepository.GetByUsername(username) != null;
+
+        if(isExisting)
+            throw new Exception("Participant is already exist");
+
+        var passwordHash = _hasher.CreatePasswordHash(password);
+
+        var participant = new ParticipantEntity
+        {
+            RoleType = "Participant",
+            Username = username,
+            Email = email,
+            Name = name,
+            PasswordHash = passwordHash,
+            BirthdayDate = birthDate,
+            Phone = phone,
+            IsVerifed = false  
+        };
+
+        await _userRepository.Create(participant);
     }
 
     public async Task<bool> LoginAsync(string username, string password, HttpContext context)

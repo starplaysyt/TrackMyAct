@@ -51,11 +51,11 @@ namespace TrackMyAct.Server.Migrations
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Phone = table.Column<string>(type: "TEXT", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UserType = table.Column<string>(type: "TEXT", maxLength: 13, nullable: false),
+                    RoleType = table.Column<string>(type: "TEXT", maxLength: 13, nullable: false),
                     Organization = table.Column<string>(type: "TEXT", nullable: true),
+                    Key = table.Column<string>(type: "TEXT", nullable: true),
                     BirthdayDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Phone = table.Column<string>(type: "TEXT", nullable: true),
                     IsVerifed = table.Column<bool>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -237,7 +237,7 @@ namespace TrackMyAct.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EventParticipants",
+                name: "EventParticipыыnts",
                 columns: table => new
                 {
                     AcceptedParticipantsId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -245,15 +245,15 @@ namespace TrackMyAct.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EventParticipants", x => new { x.AcceptedParticipantsId, x.ParticipationsId });
+                    table.PrimaryKey("PK_EventParticipыыnts", x => new { x.AcceptedParticipantsId, x.ParticipationsId });
                     table.ForeignKey(
-                        name: "FK_EventParticipants_Events_ParticipationsId",
+                        name: "FK_EventParticipыыnts_Events_ParticipationsId",
                         column: x => x.ParticipationsId,
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EventParticipants_Users_AcceptedParticipantsId",
+                        name: "FK_EventParticipыыnts_Users_AcceptedParticipantsId",
                         column: x => x.AcceptedParticipantsId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -310,8 +310,8 @@ namespace TrackMyAct.Server.Migrations
                 column: "ParticipantRequestsId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventParticipants_ParticipationsId",
-                table: "EventParticipants",
+                name: "IX_EventParticipыыnts_ParticipationsId",
+                table: "EventParticipыыnts",
                 column: "ParticipationsId");
 
             migrationBuilder.CreateIndex(
@@ -363,7 +363,7 @@ namespace TrackMyAct.Server.Migrations
                 name: "EventParticipantRequests");
 
             migrationBuilder.DropTable(
-                name: "EventParticipants");
+                name: "EventParticipыыnts");
 
             migrationBuilder.DropTable(
                 name: "OrganizerSubscriptions");

@@ -12,10 +12,6 @@ public class UserRepository
         _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// Gets UserEntity instance by username.
-    /// </summary>
-    /// <returns> UserEntity instance if the instance found, null if there is no such. </returns>
     public async Task<UserEntity?> GetByUsername(string username) =>
         await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
 
@@ -39,10 +35,6 @@ public class UserRepository
             _dbContext.Users.Remove(user);
     }
 
-    /// <summary>
-    /// Gets UserEntity instance by id.
-    /// </summary>
-    /// <returns> UserEntity instance if the instance found, null if there is no such. </returns>
     public async Task<UserEntity?> GetById(int id) =>
         await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
     

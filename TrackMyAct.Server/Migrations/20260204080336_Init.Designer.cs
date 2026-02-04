@@ -11,7 +11,7 @@ using TrackMyAct.Server;
 namespace TrackMyAct.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260131200933_Init")]
+    [Migration("20260204080336_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -32,7 +32,7 @@ namespace TrackMyAct.Server.Migrations
 
                     b.HasIndex("ParticipationsId");
 
-                    b.ToTable("EventParticipants", (string)null);
+                    b.ToTable("EventParticipыыnts", (string)null);
                 });
 
             modelBuilder.Entity("EventEntityParticipantEntity1", b =>
@@ -243,9 +243,6 @@ namespace TrackMyAct.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -258,11 +255,7 @@ namespace TrackMyAct.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserType")
+                    b.Property<string>("RoleType")
                         .IsRequired()
                         .HasMaxLength(13)
                         .HasColumnType("TEXT");
@@ -275,7 +268,7 @@ namespace TrackMyAct.Server.Migrations
 
                     b.ToTable("Users");
 
-                    b.HasDiscriminator<string>("UserType").HasValue("UserEntity");
+                    b.HasDiscriminator<string>("RoleType").HasValue("UserEntity");
 
                     b.UseTphMappingStrategy();
                 });
@@ -283,6 +276,10 @@ namespace TrackMyAct.Server.Migrations
             modelBuilder.Entity("TrackMyAct.Server.Models.Entities.OrganizerEntity", b =>
                 {
                     b.HasBaseType("TrackMyAct.Server.Models.Entities.UserEntity");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Organization")
                         .IsRequired()
@@ -300,6 +297,10 @@ namespace TrackMyAct.Server.Migrations
 
                     b.Property<bool>("IsVerifed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("Participant");
                 });

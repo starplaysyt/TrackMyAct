@@ -17,15 +17,15 @@ public class AppDbContext : DbContext
     {
         modelBuilder.Entity<UserEntity>(entity =>
         {
-            entity.HasDiscriminator<string>("UserType")
-                .HasValue<ParticipantEntity>("Participant")
-                .HasValue<OrganizerEntity>("Organizer");
+            entity.HasDiscriminator<string>("RoleType")
+            .HasValue<OrganizerEntity>("Organizer")
+            .HasValue<ParticipantEntity>("Participant");
         });
 
         modelBuilder.Entity<ParticipantEntity>(entity =>
         {
             entity.HasMany(x => x.Interests).WithMany(x => x.Participants).UsingEntity(j => j.ToTable("ParticipantInterests"));
-            entity.HasMany(x => x.Participations).WithMany(x => x.AcceptedParticipants).UsingEntity(j => j.ToTable("EventParticipants"));
+            entity.HasMany(x => x.Participations).WithMany(x => x.AcceptedParticipants).UsingEntity(j => j.ToTable("EventParticipыыnts"));
             entity.HasMany(x => x.ArchiveEvents).WithMany().UsingEntity(j => j.ToTable("ParticipantArchiveEvents"));
             entity.HasMany(x => x.ParticipantRequests).WithMany(x => x.ParticipantRequests).UsingEntity(j => j.ToTable("EventParticipantRequests"));
             entity.HasMany(x => x.OrganizerRequests).WithMany(x => x.OrganizerRequests).UsingEntity(j => j.ToTable("EventOrganizerRequests"));
@@ -43,6 +43,7 @@ public class AppDbContext : DbContext
             entity.HasOne(c => c.Event).WithMany().HasForeignKey(c => c.EventId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(c => c.Organizer).WithMany(o => o.Comments).HasForeignKey(c => c.OrganizerId).OnDelete(DeleteBehavior.Cascade);
         });
+
 
         base.OnModelCreating(modelBuilder);
     }

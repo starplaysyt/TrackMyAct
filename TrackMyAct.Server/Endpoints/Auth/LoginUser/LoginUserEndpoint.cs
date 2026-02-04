@@ -4,7 +4,7 @@ using TrackMyAct.Server.Services;
 
 namespace TrackMyAct.Server.Endpoints.Auth.LoginUser;
 
-public class LoginUserEndpoint : Endpoint<LoginRequest, LoginResponse> 
+public class LoginUserEndpoint : Endpoint<LoginRequest, AuthResponse> 
 {
     private readonly UserRepository _userRepository;
     private readonly AuthService _authService;
@@ -17,7 +17,7 @@ public class LoginUserEndpoint : Endpoint<LoginRequest, LoginResponse>
 
     public override void Configure()
     {
-        Post("auth/login");
+        Post("/user/login");
         AllowAnonymous();
     }
 
@@ -26,8 +26,16 @@ public class LoginUserEndpoint : Endpoint<LoginRequest, LoginResponse>
         var user = await _userRepository.GetByUsername(req.Username);
         
         if(user == null)
-            await Send.ResponseAsync(new LoginResponse() { IsSuccess = false, ErrorMessage = $"User with nickname {req.Username} does not exist"});
+            await Send.ResponseAsync(new () { IsSuccess = false, Message = $"User with nickname {req.Username} does not exist"});
 
-        await _authService.LoginAsync(req.Username, req.Pathword, HttpContext);
+        try
+        {
+            await _authService.LoginAsync(req.Username, req.Pathword, HttpContext);
+            await Send.OkAsync(new () { IsSuccess = true, Message = null });   
+        }
+        catch(Exception ex)
+        {
+            await Send.ResponseAsync(new () { IsSuccess = false, Message = ex.Message });
+        }
     }
 }
