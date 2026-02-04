@@ -25,6 +25,9 @@ val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFFBE99A1),
     surfaceVariant = Color(0xFF854e58),
     primaryContainer = Color(0xFFC89BA2),
+    outline = Color(0xFF573139),
+    outlineVariant = Color(0xFF6CB5A7),
+    error = Color(0xFFC74949),
 )
 
 val DarkColorScheme = darkColorScheme(
@@ -36,6 +39,21 @@ val DarkColorScheme = darkColorScheme(
     onSurface = Color(0xFF10221F),
     surfaceVariant = Color(0xFFcffaf0),
     primaryContainer = Color(0xFF6CB5A7),
+    outline = Color(0xFFEEF1F1),
+    outlineVariant = Color(0xFFA4A9A8),
+    error = Color(0xFFC74949),
+)
+
+data class IndicatorColors(
+    val error: Color,
+    val warning: Color,
+    val success: Color,
+)
+
+val AppColors = IndicatorColors(
+    error = Color(0xFFC74949),
+    warning = Color(0xFFE5C237),
+    success = Color(0xFF55B442),
 )
 
 val AppShapes = Shapes(
@@ -51,6 +69,7 @@ fun getAppFontFamily() = FontFamily(
     Font(Res.font.Nunito_Medium, FontWeight.Medium),
     Font(Res.font.Nunito_Light, FontWeight.Light),
     Font(Res.font.Nunito_Black, FontWeight.Black),
+    Font(Res.font.Nunito_Bold, FontWeight.Bold),
 )
 
 @Composable
@@ -76,6 +95,7 @@ fun AppTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography(
+            labelSmall = TextStyle(fontFamily = getAppFontFamily(), fontWeight = FontWeight.Bold, fontSize = 11.sp),
             labelMedium = TextStyle(fontFamily = getAppFontFamily(), fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, color = colorScheme.onPrimary),
             labelLarge = TextStyle(fontFamily = getAppFontFamily(), fontWeight = FontWeight.Black, fontSize = 14.sp, color = colorScheme.onPrimary),
 
