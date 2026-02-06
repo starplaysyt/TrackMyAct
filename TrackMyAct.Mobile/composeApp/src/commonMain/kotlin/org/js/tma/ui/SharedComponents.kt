@@ -1,9 +1,13 @@
 package org.js.tma.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,11 +24,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.js.tma.AppColors
 import org.js.tma.AppShapes
-import org.js.tma.data.stateValue
 import org.js.tma.util.StrengthLevel
 import org.js.tma.util.calculatePasswordStrength
 import org.js.tma.util.convertMillisToDate
@@ -75,8 +77,8 @@ fun AppButtonLarge(
 
 @Composable
 fun AppTextField(
-    value: MutableStateFlow<String>,
-    initValue: String = "",
+    value: String,
+    onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
     singleLine: Boolean = true,
@@ -84,24 +86,23 @@ fun AppTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    isError: Boolean = false,
 ) {
 
-    LaunchedEffect(true) {
-        value.value = initValue
-    }
+    val textColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
 
     TextField(
-        value = value.stateValue(),
-        onValueChange = {
-            value.value = it
-        },
+        value = value,
+        onValueChange = onValueChange,
         placeholder = {
             Text(
                 text = placeholder,
                 style = MaterialTheme.typography.bodyMedium,
             )
         },
-        textStyle = MaterialTheme.typography.bodyMedium,
+        textStyle = MaterialTheme.typography.bodyMedium.copy(
+            color = textColor,
+        ),
         modifier = modifier
             .fillMaxWidth()
             .height(53.dp),
@@ -116,12 +117,10 @@ fun AppTextField(
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
             cursorColor = MaterialTheme.colorScheme.primary,
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         ),
         interactionSource = interactionSource,
         trailingIcon = trailingIcon,
-        singleLine = singleLine
+        singleLine = singleLine,
     )
 }
 
@@ -168,7 +167,8 @@ fun AppReadOnlyTextField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDatePicker(
-    value: MutableStateFlow<String>,
+    value: String,
+    onValueChange: (String) -> Unit,
     placeholder: String,
     textFieldModifier: Modifier = Modifier,
 ) {
@@ -182,11 +182,12 @@ fun AppDatePicker(
             confirmButton = {
                 TextButton(onClick = {
                     showDatePicker = false
-                    value.value = date.selectedDateMillis?.let { millis ->
+                    onValueChange(date.selectedDateMillis?.let { millis ->
                         convertMillisToDate(millis)
-                    } ?: ""
+                    } ?: "")
                 }) {
-                    Text(text = "ОК",
+                    Text(
+                        text = "ОК",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -195,11 +196,12 @@ fun AppDatePicker(
             dismissButton = {
                 TextButton(onClick = {
                     showDatePicker = false
-                    value.value = date.selectedDateMillis?.let { millis ->
+                    onValueChange(date.selectedDateMillis?.let { millis ->
                         convertMillisToDate(millis)
-                    } ?: ""
+                    } ?: "")
                 }) {
-                    Text(text = "Отмена",
+                    Text(
+                        text = "Отмена",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -258,7 +260,7 @@ fun AppDatePicker(
     }
 
     AppReadOnlyTextField(
-        value = value.stateValue(),
+        value = value,
         placeholder = placeholder,
         trailingIcon = {
             Icon(
@@ -332,10 +334,12 @@ fun AppSmallText(
     size: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleSmall,
+        color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified,
         fontSize = size,
         textAlign = textAlign,
         modifier = modifier,
@@ -348,10 +352,12 @@ fun AppMediumText(
     size: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
+        color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified,
         fontSize = size,
         textAlign = textAlign,
         modifier = modifier,
@@ -364,10 +370,12 @@ fun AppLargeText(
     size: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleLarge,
+        color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified,
         fontSize = size,
         textAlign = textAlign,
         modifier = modifier,
@@ -378,18 +386,109 @@ fun AppLargeText(
 fun AppPasswordStrengthLevelIndicator(
     password: String,
 ) {
+    val defaultColor = MaterialTheme.colorScheme.surfaceVariant
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
             .height(6.dp)
     ) {
         drawRoundRect(
-            color = when(password.calculatePasswordStrength()) {
+            color = if (password.trim() == "")
+                defaultColor
+            else when (password.calculatePasswordStrength()) {
                 StrengthLevel.LOW -> AppColors.error
                 StrengthLevel.MEDIUM -> AppColors.warning
                 StrengthLevel.HIGH -> AppColors.success
             },
             cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx()),
         )
+    }
+}
+
+@Composable
+fun AppPasswordStrengthLevelIndicatorGradient(
+    password: String,
+) {
+    val currentColor by animateColorAsState(
+        targetValue = if (password.trim() == "")
+            MaterialTheme.colorScheme.surfaceVariant
+        else when (password.calculatePasswordStrength()) {
+            StrengthLevel.LOW -> AppColors.error
+            StrengthLevel.MEDIUM -> AppColors.warning
+            StrengthLevel.HIGH -> AppColors.success
+        },
+    )
+
+    Canvas(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(6.dp)
+    ) {
+        drawRoundRect(
+            color = currentColor,
+            cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx()),
+        )
+    }
+}
+
+@Composable
+fun AppPasswordStrengthLevelIndicatorSwap(
+    password: String,
+    modifier: Modifier = Modifier,
+) {
+    val defaultColor = MaterialTheme.colorScheme.surfaceVariant
+
+    var currentColor by remember { mutableStateOf(defaultColor) }
+    var nextColor by remember { mutableStateOf(currentColor) }
+
+    val fadedWidth = remember { Animatable(0f) }
+
+    LaunchedEffect(nextColor) {
+        if (nextColor != currentColor) {
+            fadedWidth.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 250)
+            )
+            currentColor = nextColor
+            fadedWidth.snapTo(0f)
+        }
+    }
+
+    LaunchedEffect(password) {
+        nextColor = if (password.trim() != "") {
+            when (password.calculatePasswordStrength()) {
+                StrengthLevel.LOW -> AppColors.error
+                StrengthLevel.MEDIUM -> AppColors.warning
+                StrengthLevel.HIGH -> AppColors.success
+            }
+        } else defaultColor
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+        ) {
+            drawRoundRect(
+                color = currentColor,
+                cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx()),
+            )
+        }
+        if (fadedWidth.value != 0f) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxWidth(fadedWidth.value)
+                    .height(6.dp)
+            ) {
+                drawRoundRect(
+                    color = nextColor,
+                    cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx()),
+                )
+            }
+        }
     }
 }
