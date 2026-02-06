@@ -1,8 +1,10 @@
 package org.js.tma.viewmodel
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import org.js.tma.data.stateFlow
 
+@Stable
 class RegistrationViewModel: ViewModel() {
 
     val nicknameField by stateFlow("")
