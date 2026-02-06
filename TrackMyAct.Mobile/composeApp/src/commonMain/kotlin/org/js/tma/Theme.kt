@@ -28,6 +28,7 @@ val LightColorScheme = lightColorScheme(
     outline = Color(0xFF573139),
     outlineVariant = Color(0xFF6CB5A7),
     error = Color(0xFFC74949),
+    secondaryContainer = Color(0xFF573139)
 )
 
 val DarkColorScheme = darkColorScheme(
@@ -42,6 +43,7 @@ val DarkColorScheme = darkColorScheme(
     outline = Color(0xFFEEF1F1),
     outlineVariant = Color(0xFFA4A9A8),
     error = Color(0xFFC74949),
+    secondaryContainer = Color(0xFF25433D),
 )
 
 data class IndicatorColors(
