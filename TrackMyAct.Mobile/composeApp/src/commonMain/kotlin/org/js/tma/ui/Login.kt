@@ -10,7 +10,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import org.js.tma.LocalUserData.currentScreen
+import org.js.tma.LocalAppData.currentScreen
 import org.js.tma.wrapper.AppScreen
 import trackmyact.composeapp.generated.resources.Res
 import trackmyact.composeapp.generated.resources.logo_dark
