@@ -4,29 +4,40 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.vector.Path
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import org.jetbrains.compose.resources.painterResource
 import org.js.tma.AppColors
 import org.js.tma.AppShapes
+import org.js.tma.data.ByteArrayWrapper
 import org.js.tma.util.StrengthLevel
 import org.js.tma.util.calculatePasswordStrength
 import org.js.tma.util.convertMillisToDate
@@ -287,42 +298,120 @@ fun AppDatePicker(
 
 @Composable
 fun AppCategoryCard(
+    image: ByteArrayWrapper? = null,
     title: String,
-    icon: @Composable () -> Unit
+    description: String,
 ) {
-    Card(
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .padding(4.dp),
-        shape = AppShapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        )
     ) {
-        Text(
-            text = title.uppercase(),
-            modifier = Modifier.padding(12.dp),
-            style = MaterialTheme.typography.labelLarge
-        )
+        if (image != null) AppByteImage(data = image, contentDescription =  description, modifier = Modifier.size(30.dp))
+
+        val secondColor = MaterialTheme.colorScheme.secondaryContainer
+
+        Canvas(
+            modifier = Modifier
+                .size(100.dp)
+        ) {
+
+            val cornerRadius = 30.dp.toPx()
+
+            val path = Path().apply {
+                addRoundRect(
+                    RoundRect(
+                        rect = size.toRect(),
+                        topLeft = CornerRadius(cornerRadius, cornerRadius),
+                        bottomLeft = CornerRadius(cornerRadius, cornerRadius),
+                        topRight = CornerRadius.Zero,
+                        bottomRight = CornerRadius.Zero
+                    )
+                )
+            }
+
+            drawPath(
+                path = path,
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color(red = 0, green = 0, blue = 0, alpha = 0),
+                        secondColor
+                    )
+                ),
+            )
+        }
+
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(start = 100.dp)
+        ) {
+
+            val cornerRadius = 30.dp.toPx()
+
+            val path = Path().apply {
+                addRoundRect(
+                    RoundRect(
+                        rect = size.toRect(),
+                        topLeft = CornerRadius.Zero,
+                        bottomLeft = CornerRadius.Zero,
+                        topRight = CornerRadius(cornerRadius, cornerRadius),
+                        bottomRight = CornerRadius(cornerRadius, cornerRadius)
+                    )
+                )
+            }
+
+            drawPath(
+                path = path,
+                color = secondColor,
+            )
+
+        }
+
+        Column (
+            modifier = Modifier
+                .padding(start = 100.dp, top = 24.dp)
+        ) {
+            AppLargeText(
+                text = title,
+                modifier = Modifier
+                    .padding(start = 21.dp),
+                size = 20.sp,
+                color = MaterialTheme.colorScheme.surface,
+            )
+
+            AppMediumText(
+                text = description,
+                modifier = Modifier
+                    .padding(start = 21.dp, top = 8.dp),
+                size = 12.sp,
+                color = MaterialTheme.colorScheme.surface,
+            )
+        }
+
     }
+
 }
 
 @Suppress("ParamsComparedByRef")
 @Composable
 fun AppByteImage(
-    data: ByteArray,
+    data: ByteArrayWrapper,
+    modifier: Modifier = Modifier,
     contentDescription: String? = null
 ) {
     val context = LocalPlatformContext.current
 
-    val request = remember(data) {
+    val request = remember(data.data) {
         ImageRequest.Builder(context)
-            .data(data)
+            .data(data.data)
             .build()
     }
 
     AsyncImage(
+        modifier = modifier,
         model = request,
         contentDescription = contentDescription,
     )
@@ -331,6 +420,7 @@ fun AppByteImage(
 @Composable
 fun AppSmallText(
     text: String,
+    color: Color = Color.Unspecified,
     size: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
@@ -339,7 +429,7 @@ fun AppSmallText(
     Text(
         text = text,
         style = MaterialTheme.typography.titleSmall,
-        color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified,
+        color = if (isError) MaterialTheme.colorScheme.error else color,
         fontSize = size,
         textAlign = textAlign,
         modifier = modifier,
@@ -349,6 +439,7 @@ fun AppSmallText(
 @Composable
 fun AppMediumText(
     text: String,
+    color: Color = Color.Unspecified,
     size: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
@@ -357,7 +448,7 @@ fun AppMediumText(
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
-        color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified,
+        color = if (isError) MaterialTheme.colorScheme.error else color,
         fontSize = size,
         textAlign = textAlign,
         modifier = modifier,
@@ -367,6 +458,7 @@ fun AppMediumText(
 @Composable
 fun AppLargeText(
     text: String,
+    color: Color = Color.Unspecified,
     size: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
@@ -375,7 +467,7 @@ fun AppLargeText(
     Text(
         text = text,
         style = MaterialTheme.typography.titleLarge,
-        color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified,
+        color = if (isError) MaterialTheme.colorScheme.error else color,
         fontSize = size,
         textAlign = textAlign,
         modifier = modifier,
