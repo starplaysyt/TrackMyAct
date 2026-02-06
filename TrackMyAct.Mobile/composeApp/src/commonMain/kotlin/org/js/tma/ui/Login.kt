@@ -10,6 +10,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import org.js.tma.LocalUserData.currentScreen
+import org.js.tma.wrapper.AppScreen
 import trackmyact.composeapp.generated.resources.Res
 import trackmyact.composeapp.generated.resources.logo_dark
 import trackmyact.composeapp.generated.resources.logo_light
@@ -46,7 +48,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AppLargeText(
-                value = "Логин",
+                text = "Логин",
                 size = 32.sp,
                 textAlign = TextAlign.Center,
             )
@@ -54,7 +56,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             AppSmallText(
-                value = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+                text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -78,22 +80,26 @@ fun LoginScreen(
 
             AppButtonMedium(
                 text = "Войти",
+                onClick = {
+                    currentScreen.value = AppScreen.REG_STEP_1
+                    // TODO
+                }
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             AppMediumText(
-                value = "Не зарегистрирован?",
+                text = "Не зарегистрирован?",
                 textAlign = TextAlign.Center,
             )
 
             AppLargeText(
-                value = "Регистрация",
+                text = "Регистрация",
                 size = 14.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.clickable(
                     onClick = {
-                        // TODO: Add redirect to Registration page
+                        currentScreen.value = AppScreen.REG_STEP_1
                     }
                 )
             )
