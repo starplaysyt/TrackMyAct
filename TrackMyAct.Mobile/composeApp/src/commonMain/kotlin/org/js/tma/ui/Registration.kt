@@ -13,9 +13,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import org.js.tma.LocalUserData.currentScreen
+import org.js.tma.LocalAppData.currentScreen
 import org.js.tma.data.stateValue
-import org.js.tma.viewmodel.RegistrationViewModel
+import org.js.tma.viewmodel.ParticipantRegistrationViewModel
 import org.js.tma.wrapper.AppScreen
 import trackmyact.composeapp.generated.resources.Res
 import trackmyact.composeapp.generated.resources.hide_password
@@ -25,14 +25,15 @@ import trackmyact.composeapp.generated.resources.logo_light
 @Composable
 fun RegistrationStep1Screen(
     darkTheme: Boolean,
-    viewModel: RegistrationViewModel,
+    viewModel: ParticipantRegistrationViewModel,
 ) {
 
     RegistrationWrapper(
         darkTheme = darkTheme,
         onClick = {
-            currentScreen.value = AppScreen.REG_STEP_2
-            // TODO
+            if (viewModel.nicknameField.value.trim().isNotEmpty() && viewModel.emailField.value.trim().isNotEmpty() && viewModel.nicknameField.value.trim().length >= 6) {
+                currentScreen.value = AppScreen.REG_STEP_2
+            }
         }
     ) {
 
@@ -81,7 +82,7 @@ fun RegistrationStep1Screen(
 @Composable
 fun RegistrationStep2Screen(
     darkTheme: Boolean,
-    viewModel: RegistrationViewModel,
+    viewModel: ParticipantRegistrationViewModel,
 ) {
     var showPassword by remember { mutableStateOf(false) }
     var passwordFieldFirst by remember { mutableStateOf("") }
@@ -89,8 +90,10 @@ fun RegistrationStep2Screen(
 
     RegistrationWrapper(darkTheme,
         onClick = {
-            currentScreen.value = AppScreen.REG_STEP_3
-            // TODO
+            if (passwordFieldFirst == passwordFieldSecond) {
+                viewModel.passwordField.value = passwordFieldFirst
+                currentScreen.value = AppScreen.REG_STEP_3
+            }
         }
     ) {
         AppTextField(
@@ -159,12 +162,14 @@ fun RegistrationStep2Screen(
 @Composable
 fun RegistrationStep3Screen(
     darkTheme: Boolean,
-    viewModel: RegistrationViewModel,
+    viewModel: ParticipantRegistrationViewModel,
+    onClick: () -> Unit
 ) {
     RegistrationWrapper(darkTheme,
         onClick = {
-            currentScreen.value = AppScreen.LOGIN
-            // TODO
+            if (viewModel.fullNameField.value.trim().isNotEmpty() && viewModel.phoneField.value.trim().isNotEmpty() && viewModel.birthdayField.value.trim().isNotEmpty()) {
+                onClick()
+            }
         }
     ) {
         AppTextField(
@@ -210,8 +215,8 @@ fun RegistrationStep3Screen(
         Spacer(modifier = Modifier.height(10.dp))
 
         AppDatePicker(
-            value = viewModel.birthDateField.stateValue(),
-            onValueChange = {viewModel.birthDateField.value = it},
+            value = viewModel.birthdayField.stateValue(),
+            onValueChange = {viewModel.birthdayField.value = it},
             placeholder = "Дата рождения (необязательно)"
         )
 
