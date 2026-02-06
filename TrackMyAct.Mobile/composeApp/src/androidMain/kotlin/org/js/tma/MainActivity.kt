@@ -16,6 +16,12 @@ class MainActivity : ComponentActivity() {
             App()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AppCloser.close()
+    }
+
 }
 
 @Preview
