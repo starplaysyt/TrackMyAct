@@ -3,20 +3,29 @@ package org.js.tma.wrapper
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.painterResource
 import org.js.tma.AppTheme
-import org.js.tma.LocalUserData.currentBottomBarSelected
-import org.js.tma.LocalUserData.currentScreen
+import org.js.tma.LocalAppData.currentBottomBarSelected
+import org.js.tma.LocalAppData.currentScreen
 import org.js.tma.data.stateValue
 import org.js.tma.getBackground
+import org.js.tma.service.HttpKtorService
 import org.js.tma.ui.*
-import org.js.tma.viewmodel.RegistrationViewModel
+import org.js.tma.viewmodel.CategoryViewModel
+import org.js.tma.viewmodel.CategoryViewModelFactory
+import org.js.tma.viewmodel.OrganizerViewModel
+import org.js.tma.viewmodel.OrganizerViewModelFactory
+import org.js.tma.viewmodel.ParticipantRegistrationViewModel
+import org.js.tma.viewmodel.ParticipantRegistrationViewModelFactory
 import trackmyact.composeapp.generated.resources.*
 
 enum class AppScreen(val needBottomBar: Boolean = true) {
@@ -25,13 +34,9 @@ enum class AppScreen(val needBottomBar: Boolean = true) {
     REG_STEP_2(false),
     REG_STEP_3(false),
     ALL_CATEGORIES,
-    MY_CATEGORIES,
     ALL_ORGANIZERS,
-    MY_ORGANIZERS,
-    ORGANIZER,
     ACCOUNT,
-    CREATE_EVENT,
-    ALL_EVENTS,
+    CREATE_EVENT(false),
     MY_EVENTS,
     EVENT,
     INVITE_BY_ORGANIZER,
@@ -42,19 +47,36 @@ enum class AppScreen(val needBottomBar: Boolean = true) {
     Test
 }
 
-enum class AppBarPage(val title: String, val painter: @Composable () -> Painter) {
-    NOTHING("Ничего", {painterResource(Res.drawable.n_a)}),
-    FOOTBALL("Футбол", {painterResource(Res.drawable.football_page)}),
-    MAIN("Главная", {painterResource(Res.drawable.main_page)}),
-    CALENDAR("Календарь", {painterResource(Res.drawable.calendar_page)}),
-    ACCOUNT("Аккаунт", {painterResource(Res.drawable.account_page)}),
+enum class AppBarPage(val title: String, val painter: @Composable () -> Painter, val screen: AppScreen) {
+    NOTHING("Ничего", {painterResource(Res.drawable.n_a)}, AppScreen.LOGIN),
+    FOOTBALL("Футбол", {painterResource(Res.drawable.football_page)}, AppScreen.ALL_CATEGORIES),
+    MAIN("Главная", {painterResource(Res.drawable.main_page)}, AppScreen.MY_EVENTS),
+    CALENDAR("Календарь", {painterResource(Res.drawable.calendar_page)}, AppScreen.MY_EVENTS),
+    ACCOUNT("Аккаунт", {painterResource(Res.drawable.account_page)}, AppScreen.ACCOUNT),
 }
 
 @Composable
 fun AppPreviewWrapper(
     isDarkTheme: Boolean = false,
-    registrationViewModel: RegistrationViewModel = viewModel{ RegistrationViewModel() }
-) {
+    httpKtorService: HttpKtorService = HttpKtorService(),
+
+    participantRegistrationViewModel: ParticipantRegistrationViewModel = viewModel (
+        factory = ParticipantRegistrationViewModelFactory (
+            httpKtorService = httpKtorService
+        )
+    ),
+    categoryViewModel: CategoryViewModel = viewModel (
+        factory = CategoryViewModelFactory(
+            httpKtorService = httpKtorService
+        )
+    ),
+    organizerViewModel: OrganizerViewModel = viewModel (
+        factory = OrganizerViewModelFactory(
+            httpKtorService = httpKtorService
+        )
+    )
+
+    ) {
     AppTheme(darkTheme = isDarkTheme) {
         Scaffold(
             bottomBar = {
@@ -70,18 +92,18 @@ fun AppPreviewWrapper(
             ) {
                 when (currentScreen.stateValue()) {
                     AppScreen.LOGIN -> LoginScreen(isDarkTheme)
-                    AppScreen.REG_STEP_1 -> RegistrationStep1Screen(isDarkTheme, registrationViewModel)
-                    AppScreen.REG_STEP_2 -> RegistrationStep2Screen(isDarkTheme, registrationViewModel)
-                    AppScreen.REG_STEP_3 -> RegistrationStep3Screen(isDarkTheme, registrationViewModel)
-                    AppScreen.ALL_CATEGORIES -> CategoriesScreen()
+                    AppScreen.REG_STEP_1 -> RegistrationStep1Screen(isDarkTheme, participantRegistrationViewModel)
+                    AppScreen.REG_STEP_2 -> RegistrationStep2Screen(isDarkTheme, participantRegistrationViewModel)
+                    AppScreen.REG_STEP_3 -> RegistrationStep3Screen(isDarkTheme, participantRegistrationViewModel, {
+                        participantRegistrationViewModel.sendRegisterRequest()
+                        currentScreen.value = AppScreen.LOGIN
+                        currentBottomBarSelected.value = AppBarPage.MAIN
+                    })
+                    AppScreen.ALL_CATEGORIES -> AllCategories(categoryViewModel)
                     AppScreen.CREATE_EVENT -> CreateEventScreen()
                     AppScreen.Test -> TestScreen()
-                    AppScreen.MY_CATEGORIES -> TODO()
-                    AppScreen.ALL_ORGANIZERS -> TODO()
-                    AppScreen.MY_ORGANIZERS -> TODO()
-                    AppScreen.ORGANIZER -> TODO()
+                    AppScreen.ALL_ORGANIZERS -> AllOrganizers(organizerViewModel)
                     AppScreen.ACCOUNT -> TODO()
-                    AppScreen.ALL_EVENTS -> TODO()
                     AppScreen.MY_EVENTS -> TODO()
                     AppScreen.EVENT -> TODO()
                     AppScreen.INVITE_BY_ORGANIZER -> TODO()
@@ -105,7 +127,7 @@ fun AppBottomBar(
         for (item in AppBarPage.entries) {
             NavigationBarItem(
                 icon = {
-                    Icon(painter = item.painter(), contentDescription = null)
+                    Icon(painter = item.painter(), contentDescription = null, modifier = Modifier.size(24.dp))
                 },
                 label = {
                     Text(
@@ -118,6 +140,7 @@ fun AppBottomBar(
                 selected = currentBottomBarSelected.stateValue() == item,
                 onClick = {
                     currentBottomBarSelected.value = item
+                    currentScreen.value = item.screen
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = Color.Transparent,
