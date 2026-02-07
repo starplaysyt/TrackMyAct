@@ -38,6 +38,9 @@ public class UserRepository
     public async Task<UserEntity?> GetById(int id) =>
         await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
     
-    public async Task<List<UserEntity>> GetList() =>
-        await _dbContext.Users.ToListAsync();
+    public async Task<IReadOnlyList<OrganizerEntity>> GetOrganizersList()
+    {
+        var result = await _dbContext.Users.OfType<OrganizerEntity>().ToListAsync();   
+        return result.AsReadOnly();
+    }
 }

@@ -80,6 +80,7 @@ public class AuthService
         {
             new (ClaimTypes.NameIdentifier, user.Id.ToString()),
             new (ClaimTypes.Name, user.Username),
+            new (ClaimTypes.Role, user.RoleType)
         };
 
         var identity = new ClaimsIdentity(claims, "Cookies");

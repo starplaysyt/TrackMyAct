@@ -12,6 +12,7 @@ public class EventEntity : Entity
 
     public OrganizerEntity Organizer { get; set; }
     public int OrganizerId { get; set; }
+    
     public ICollection<ParticipantEntity> AcceptedParticipants { get; set; }
 
     public ICollection<ParticipantEntity> ParticipantRequests { get; set; }

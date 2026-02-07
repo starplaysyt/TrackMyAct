@@ -19,6 +19,7 @@ builder.Services.AddHttpContextAccessor();
 
 //Repos
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<EventRepository>();
 
 //Services
 builder.Services.AddScoped<AuthService>();
