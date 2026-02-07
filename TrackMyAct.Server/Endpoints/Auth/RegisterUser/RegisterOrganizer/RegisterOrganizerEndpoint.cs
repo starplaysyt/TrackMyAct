@@ -22,7 +22,7 @@ public class RegisterOrganizerEndpoint : Endpoint<RegisterOrganizerRequest, Auth
     {
         try
         {
-            await _authService.RegisterOrganizerAsync(req.Login, req.Email, req.Password, req.Name, req.Organization);
+            await _authService.RegisterOrganizerAsync(req.Login, req.Email, req.Password, req.Name, req.Organization, req.Key);
             await Send.OkAsync(new () { IsSuccess = true, Message = null });
         }
         catch(Exception ex)

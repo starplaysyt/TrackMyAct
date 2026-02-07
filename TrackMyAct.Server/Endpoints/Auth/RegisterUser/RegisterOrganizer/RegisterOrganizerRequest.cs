@@ -16,4 +16,7 @@ public class RegisterOrganizerRequest
 
     [Required]
     public string Organization { get; set; } = string.Empty;
+
+    [Required]
+    public string Key { get; set; }
 }

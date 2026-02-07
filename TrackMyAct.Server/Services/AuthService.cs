@@ -21,7 +21,7 @@ public class AuthService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task RegisterOrganizerAsync(string username, string email, string password, string name, string organization)
+    public async Task RegisterOrganizerAsync(string username, string email, string password, string name, string organization, string key)
     {
         var isExisting = await _userRepository.GetByUsername(username) != null;
 
@@ -37,7 +37,8 @@ public class AuthService
             Name = name,
             PasswordHash = passwordHash,
             Email = email,
-            Organization = organization
+            Organization = organization,
+            Key = key
         };
 
         await _userRepository.Create(organizer);

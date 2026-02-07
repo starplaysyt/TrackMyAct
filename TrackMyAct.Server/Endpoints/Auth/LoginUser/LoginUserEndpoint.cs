@@ -30,7 +30,7 @@ public class LoginUserEndpoint : Endpoint<LoginRequest, AuthResponse>
 
         try
         {
-            await _authService.LoginAsync(req.Username, req.Pathword, HttpContext);
+            await _authService.LoginAsync(req.Username, req.Password, HttpContext);
             await Send.OkAsync(new () { IsSuccess = true, Message = null });   
         }
         catch(Exception ex)
