@@ -6,7 +6,7 @@ riderModule.iml
 /.idea/*
 /*/.idea
 /*/.gradle
-/*/composeApp
+/*/composeApp/build
 /*/.kotlin
 /*/*.db-shm
 /*/*.db-wal

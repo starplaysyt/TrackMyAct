@@ -1,5 +1,4 @@
 using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
 using TrackMyAct.Server.Models.Entities;
 using TrackMyAct.Server.Models.Repositories;
 

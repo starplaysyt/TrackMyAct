@@ -1,7 +1,6 @@
-using System.Net.Mail;
 using FastEndpoints;
 
-namespace TrackMyAct.Server.Endpoints.Auth;
+namespace TrackMyAct.Server.Endpoints.Auth.CheckLogin;
 
 public class CheckLoginEndpoint : EndpointWithoutRequest<AuthResponse>
 {
