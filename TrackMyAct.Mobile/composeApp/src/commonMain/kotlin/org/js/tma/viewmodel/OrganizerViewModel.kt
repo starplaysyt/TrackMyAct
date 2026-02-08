@@ -9,34 +9,41 @@ import kotlinx.coroutines.launch
 import org.js.tma.data.ByteArrayWrapper
 import org.js.tma.data.stateFlow
 import org.js.tma.service.HttpKtorService
+import org.js.tma.service.OrganizerService
 import kotlin.reflect.KClass
 
 @Stable
 class OrganizerViewModel (private val httpKtorService: HttpKtorService): ViewModel() {
 
-    val organizers by stateFlow(listOf<CategoryData>())
+    val organizers by stateFlow(emptyList<OrganizerData>())
     val loadingState by stateFlow<LoadingState>(LoadingState.NotStarted)
+
+    val service = OrganizerService(httpKtorService)
 
     fun loadOrganizers() {
         viewModelScope.launch {
             loadingState.value = LoadingState.Loading
             try {
-                loadingState.value = load()
+                val data = service.getList()
+                if (data.first != null) {
+                    organizers.value = data.first!!.organizers.map { OrganizerData(
+                        image = null,
+                        title = it.name,
+                        description = it.organization
+                    ) }
+                }
+                loadingState.value = data.second
             } catch (e: Exception) {
                 loadingState.value = LoadingState.Failed(error = e.message ?: "Unknown error")
             }
         }
     }
 
-    private suspend fun load() : LoadingState {
-        TODO()
-    }
-
 }
 
 @Stable
 data class OrganizerData(
-    val image: ByteArrayWrapper,
+    val image: ByteArrayWrapper? = null,
     val title: String,
     val description: String,
 )

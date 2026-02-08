@@ -5,20 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import kotlinx.coroutines.launch
 import org.js.tma.data.stateFlow
-import org.js.tma.dto.RegisterParticipantRequest
 import org.js.tma.service.HttpKtorService
+import org.js.tma.service.RegistrationService
 import kotlin.reflect.KClass
 
 @Stable
 class ParticipantRegistrationViewModel(private val httpKtorService: HttpKtorService): ViewModel() {
 
-    val nicknameField by stateFlow("")
+    val loginField by stateFlow("")
     val emailField by stateFlow("")
     val passwordField by stateFlow("")
     val fullNameField by stateFlow("")
@@ -27,34 +23,18 @@ class ParticipantRegistrationViewModel(private val httpKtorService: HttpKtorServ
 
     val sendingState by stateFlow<LoadingState>(LoadingState.NotStarted)
 
+    private val service = RegistrationService(httpKtorService)
+
     fun sendRegisterRequest() {
         viewModelScope.launch {
             sendingState.value = LoadingState.Loading
             try {
-                sendingState.value = register(nicknameField.value, emailField.value, passwordField.value, fullNameField.value, phoneField.value, birthdayField.value)
+                sendingState.value = service.registerParticipant(loginField.value, emailField.value, passwordField.value, fullNameField.value, phoneField.value, birthdayField.value)
             } catch (e: Exception) {
+                print(e.stackTraceToString())
                 sendingState.value = LoadingState.Failed(error = e.message ?: "Unknown error")
             }
         }
-    }
-
-    private suspend fun register(
-        nickname: String,
-        email: String,
-        password: String,
-        fullName: String,
-        phone: String,
-        birthday: String,
-    ) : LoadingState {
-        val registerParticipantRequest = RegisterParticipantRequest(nickname, email, password, fullName, phone, birthday)
-
-        val response = httpKtorService.getClient().post("http://localhost:5241/user/particiant/register") {
-            contentType(ContentType.Application.Json)
-            setBody(registerParticipantRequest)
-        }
-
-        return if (response.status.value == 200) LoadingState.Success
-            else LoadingState.Failed(error = "Registration error")
     }
 
 }

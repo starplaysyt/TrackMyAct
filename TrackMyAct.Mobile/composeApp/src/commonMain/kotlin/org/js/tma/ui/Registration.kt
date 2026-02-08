@@ -13,7 +13,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import org.js.tma.LocalAppData.currentScreen
 import org.js.tma.data.stateValue
 import org.js.tma.viewmodel.ParticipantRegistrationViewModel
 import org.js.tma.wrapper.AppScreen
@@ -26,20 +25,21 @@ import trackmyact.composeapp.generated.resources.logo_light
 fun RegistrationStep1Screen(
     darkTheme: Boolean,
     viewModel: ParticipantRegistrationViewModel,
+    onNextClick: () -> Unit,
 ) {
 
     RegistrationWrapper(
         darkTheme = darkTheme,
         onClick = {
-            if (viewModel.nicknameField.value.trim().isNotEmpty() && viewModel.emailField.value.trim().isNotEmpty() && viewModel.nicknameField.value.trim().length >= 6) {
-                currentScreen.value = AppScreen.REG_STEP_2
+            if (viewModel.loginField.value.trim().isNotEmpty() && viewModel.emailField.value.trim().isNotEmpty() && viewModel.loginField.value.trim().length >= 6) {
+                onNextClick()
             }
         }
     ) {
 
         AppTextField(
-            value = viewModel.nicknameField.stateValue(),
-            onValueChange = {viewModel.nicknameField.value = it},
+            value = viewModel.loginField.stateValue(),
+            onValueChange = {viewModel.loginField.value = it},
             placeholder = "Никнейм"
         )
 
@@ -83,6 +83,7 @@ fun RegistrationStep1Screen(
 fun RegistrationStep2Screen(
     darkTheme: Boolean,
     viewModel: ParticipantRegistrationViewModel,
+    onNextClick: () -> Unit,
 ) {
     var showPassword by remember { mutableStateOf(false) }
     var passwordFieldFirst by remember { mutableStateOf("") }
@@ -92,7 +93,7 @@ fun RegistrationStep2Screen(
         onClick = {
             if (passwordFieldFirst == passwordFieldSecond) {
                 viewModel.passwordField.value = passwordFieldFirst
-                currentScreen.value = AppScreen.REG_STEP_3
+                onNextClick()
             }
         }
     ) {
@@ -168,6 +169,7 @@ fun RegistrationStep3Screen(
     RegistrationWrapper(darkTheme,
         onClick = {
             if (viewModel.fullNameField.value.trim().isNotEmpty() && viewModel.phoneField.value.trim().isNotEmpty() && viewModel.birthdayField.value.trim().isNotEmpty()) {
+                println("Pizdec")
                 onClick()
             }
         }
@@ -244,7 +246,7 @@ private fun RegistrationWrapper(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 25.dp, horizontal = 25.dp,),
+            .padding(vertical = 25.dp, horizontal = 25.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(14.dp))

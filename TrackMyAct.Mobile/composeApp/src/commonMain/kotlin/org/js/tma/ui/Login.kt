@@ -10,7 +10,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import org.js.tma.LocalAppData.currentScreen
+import org.js.tma.data.stateValue
+import org.js.tma.viewmodel.LoginViewModel
 import org.js.tma.wrapper.AppScreen
 import trackmyact.composeapp.generated.resources.Res
 import trackmyact.composeapp.generated.resources.logo_dark
@@ -19,6 +20,9 @@ import trackmyact.composeapp.generated.resources.logo_light
 @Composable
 fun LoginScreen(
     darkTheme: Boolean,
+    loginViewModel: LoginViewModel,
+    onLogInClick: () -> Unit,
+    onRegisterClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -64,16 +68,22 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(35.dp))
 
-            AppReadOnlyTextField(
-                value = "Логин",
-                placeholder = ""
+            AppTextField(
+                value = loginViewModel.usernameField.stateValue(),
+                placeholder = "Логин",
+                onValueChange = {
+                    loginViewModel.usernameField.value = it
+                },
             )
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            AppReadOnlyTextField(
-                value = "Пароль",
-                placeholder = ""
+            AppTextField(
+                value = loginViewModel.passwordField.stateValue(),
+                placeholder = "Пароль",
+                onValueChange = {
+                    loginViewModel.passwordField.value = it
+                },
             )
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -81,8 +91,7 @@ fun LoginScreen(
             AppButtonMedium(
                 text = "Войти",
                 onClick = {
-                    currentScreen.value = AppScreen.REG_STEP_1
-                    // TODO
+                    onLogInClick()
                 }
             )
 
@@ -98,9 +107,7 @@ fun LoginScreen(
                 size = 14.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.clickable(
-                    onClick = {
-                        currentScreen.value = AppScreen.REG_STEP_1
-                    }
+                    onClick = onRegisterClick
                 )
             )
         }

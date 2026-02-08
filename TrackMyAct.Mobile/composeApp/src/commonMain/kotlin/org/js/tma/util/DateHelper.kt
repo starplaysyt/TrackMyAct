@@ -8,5 +8,5 @@ import kotlin.time.Instant
 fun convertMillisToDate(millis: Long): String {
     val instant = Instant.fromEpochMilliseconds(millis)
     val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
-    return "${date.day}.${date.month.number}.${date.year}"
+    return "${date.year}.${if (date.month.number.toString().length == 1) "0" + date.month.number else date.month.number}.${if (date.day.toString().length == 1) "0" + date.day else date.day}"
 }
