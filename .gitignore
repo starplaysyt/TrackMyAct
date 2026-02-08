@@ -4,3 +4,10 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 /.idea/*
+/*/.idea
+/*/.gradle
+/*/composeApp
+/*/.kotlin
+/*/*.db-shm
+/*/*.db-wal
+/*/build
