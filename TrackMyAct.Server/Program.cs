@@ -12,7 +12,20 @@ builder.Services.AddFastEndpoints()
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAuthentication("Cookies").AddCookie("Cookies");
+builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
 builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
