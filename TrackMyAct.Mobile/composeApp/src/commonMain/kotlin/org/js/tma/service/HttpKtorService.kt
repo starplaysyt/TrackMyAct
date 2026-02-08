@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
+import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.cookies.cookies
 import io.ktor.client.plugins.logging.LogLevel
@@ -20,10 +20,16 @@ import kotlinx.serialization.modules.contextual
 import org.js.tma.AppCloser
 
 @Stable
-class HttpKtorService {
+class HttpKtorService(
+    private val _storage: CookiesStorage
+) {
+
+    init {
+        AppCloser.setHttpKtorService(this)
+    }
     private val client = HttpClient {
         install(HttpCookies) {
-            storage = AcceptAllCookiesStorage()
+            storage = _storage
         }
         install(ContentNegotiation) {
             json(Json {
@@ -47,10 +53,6 @@ class HttpKtorService {
         install(HttpTimeout) {
             requestTimeoutMillis = 25000
         }
-    }
-
-    constructor() {
-        AppCloser.setHttpKtorService(this)
     }
 
     fun getClient(): HttpClient {

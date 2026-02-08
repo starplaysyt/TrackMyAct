@@ -68,7 +68,7 @@ enum class AppBarPage(val title: String, val painter: @Composable () -> Painter,
 @Composable
 fun AppPreviewWrapper(
     isDarkTheme: Boolean = false,
-    httpKtorService: HttpKtorService = HttpKtorService(),
+    httpKtorService: HttpKtorService,
 
     participantRegistrationViewModel: ParticipantRegistrationViewModel = viewModel(
         factory = ParticipantRegistrationViewModelFactory(
