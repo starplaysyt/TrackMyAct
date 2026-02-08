@@ -1,9 +1,11 @@
 using FastEndpoints;
+using Microsoft.AspNetCore.Authorization;
 using TrackMyAct.Server.Models.Entities;
 using TrackMyAct.Server.Models.Repositories;
 
 namespace TrackMyAct.Server.Endpoints.Events.GetEvents;
 
+[AllowAnonymous]
 public class GetEventsListEndpoint : EndpointWithoutRequest<List<EventEntity>>
 {
     private readonly EventRepository _eventRepository;
