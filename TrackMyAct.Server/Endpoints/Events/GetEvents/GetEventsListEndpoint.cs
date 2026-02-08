@@ -1,9 +1,10 @@
 using FastEndpoints;
+using TrackMyAct.Server.Models.Entities;
 using TrackMyAct.Server.Models.Repositories;
 
 namespace TrackMyAct.Server.Endpoints.Events.GetEvents;
 
-public class GetEventsListEndpoint : EndpointWithoutRequest
+public class GetEventsListEndpoint : EndpointWithoutRequest<List<EventEntity>>
 {
     private readonly EventRepository _eventRepository;
 
@@ -19,7 +20,7 @@ public class GetEventsListEndpoint : EndpointWithoutRequest
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var result = await _eventRepository.GetList();
+        var result = (await _eventRepository.GetList()).ToList();
 
         await Send.OkAsync(result);
     }
