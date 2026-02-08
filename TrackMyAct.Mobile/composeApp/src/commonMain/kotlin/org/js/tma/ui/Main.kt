@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,6 +21,10 @@ import org.js.tma.viewmodel.MainViewModel
 fun Main(
     mainViewModel: MainViewModel
 ) {
+
+    LaunchedEffect(Unit) {
+        mainViewModel.loadEvents()
+    }
 
     Column(
         modifier = Modifier
@@ -43,11 +48,15 @@ fun Main(
         Spacer(modifier = Modifier.height(10.dp))
 
         mainViewModel.events.stateValue().forEach { event ->
+            Spacer(modifier = Modifier.height(10.dp))
+
             AppCategoryCard(
                 image = null,
                 title = event.name,
                 description = event.description,
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 

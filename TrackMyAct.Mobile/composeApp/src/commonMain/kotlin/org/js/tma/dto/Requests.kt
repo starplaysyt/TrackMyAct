@@ -17,7 +17,7 @@ data class CreateEventRequest(
 @Serializable
 data class LoginRequest(
     var username: String,
-    var pathword: String
+    var password: String
 )
 
 @Serializable

@@ -7,7 +7,6 @@ import io.ktor.http.contentType
 import org.js.tma.dto.EventEntity
 import org.js.tma.viewmodel.LoadingState
 
-
 class MainService(private val httpKtorService: HttpKtorService) {
 
     suspend fun getAllEvents(): Pair<List<EventEntity>?, LoadingState> {

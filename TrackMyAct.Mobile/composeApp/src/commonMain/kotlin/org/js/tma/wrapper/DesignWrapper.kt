@@ -28,6 +28,8 @@ import org.js.tma.viewmodel.CategoryViewModelFactory
 import org.js.tma.viewmodel.LoadingState
 import org.js.tma.viewmodel.LoginViewModel
 import org.js.tma.viewmodel.LoginViewModelFactory
+import org.js.tma.viewmodel.MainViewModel
+import org.js.tma.viewmodel.MainViewModelFactory
 import org.js.tma.viewmodel.OrganizerViewModel
 import org.js.tma.viewmodel.OrganizerViewModelFactory
 import org.js.tma.viewmodel.ParticipantRegistrationViewModel
@@ -50,15 +52,16 @@ enum class AppScreen(val needBottomBar: Boolean = true) {
     MY_INVITES,
     VISIT_CHECK,
     VISIT_REQUESTS,
+    LOADING,
     Test
 }
 
 enum class AppBarPage(val title: String, val painter: @Composable () -> Painter, val screen: AppScreen) {
-    NOTHING("Ничего", {painterResource(Res.drawable.n_a)}, AppScreen.LOGIN),
-    FOOTBALL("Футбол", {painterResource(Res.drawable.football_page)}, AppScreen.ALL_CATEGORIES),
-    MAIN("Главная", {painterResource(Res.drawable.main_page)}, AppScreen.MAIN),
-    CALENDAR("Календарь", {painterResource(Res.drawable.calendar_page)}, AppScreen.MAIN),
-    ACCOUNT("Аккаунт", {painterResource(Res.drawable.account_page)}, AppScreen.ACCOUNT),
+    NOTHING("Ничего", { painterResource(Res.drawable.n_a) }, AppScreen.LOGIN),
+    FOOTBALL("Футбол", { painterResource(Res.drawable.football_page) }, AppScreen.ALL_CATEGORIES),
+    MAIN("Главная", { painterResource(Res.drawable.main_page) }, AppScreen.MAIN),
+    CALENDAR("Календарь", { painterResource(Res.drawable.calendar_page) }, AppScreen.MAIN),
+    ACCOUNT("Аккаунт", { painterResource(Res.drawable.account_page) }, AppScreen.ACCOUNT),
 }
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -67,33 +70,38 @@ fun AppPreviewWrapper(
     isDarkTheme: Boolean = false,
     httpKtorService: HttpKtorService = HttpKtorService(),
 
-    participantRegistrationViewModel: ParticipantRegistrationViewModel = viewModel (
-        factory = ParticipantRegistrationViewModelFactory (
+    participantRegistrationViewModel: ParticipantRegistrationViewModel = viewModel(
+        factory = ParticipantRegistrationViewModelFactory(
             httpKtorService = httpKtorService
         )
     ),
-    categoryViewModel: CategoryViewModel = viewModel (
+    categoryViewModel: CategoryViewModel = viewModel(
         factory = CategoryViewModelFactory(
             httpKtorService = httpKtorService
         )
     ),
-    organizerViewModel: OrganizerViewModel = viewModel (
+    organizerViewModel: OrganizerViewModel = viewModel(
         factory = OrganizerViewModelFactory(
             httpKtorService = httpKtorService
         )
     ),
-    appViewModel: AppViewModel = viewModel (
+    appViewModel: AppViewModel = viewModel(
         factory = AppViewModelFactory(
             httpKtorService = httpKtorService
         )
     ),
-    loginViewModel: LoginViewModel = viewModel (
+    loginViewModel: LoginViewModel = viewModel(
         factory = LoginViewModelFactory(
+            httpKtorService = httpKtorService
+        )
+    ),
+    mainViewModel: MainViewModel = viewModel(
+        factory = MainViewModelFactory(
             httpKtorService = httpKtorService
         )
     )
 
-    ) {
+) {
     AppTheme(darkTheme = isDarkTheme) {
         Scaffold(
             bottomBar = {
@@ -107,80 +115,90 @@ fun AppPreviewWrapper(
                     .padding(innerPadding)
                     .fillMaxSize()
             ) {
+                println("IS LOGIN: " + appViewModel.isLogin.stateValue())
+
                 if (appViewModel.appState.stateValue() != LoadingState.Success) {
                     if (appViewModel.appState.stateValue() == LoadingState.Loading) {
                         LoadingScreen()
-                    }
-                    else if (appViewModel.appState.stateValue() == LoadingState.NotStarted) {
+                    } else if (appViewModel.appState.stateValue() == LoadingState.NotStarted) {
                         appViewModel.checkLogIn()
                     }
                 }
-                else if (loginViewModel.state.stateValue() != LoadingState.NotStarted) {
-                    if (loginViewModel.state.stateValue() == LoadingState.Loading) {
-                        LoadingScreen()
-                    }
-                    else when (loginViewModel.state.stateValue()) {
-                        LoadingState.Success -> {
-                            appViewModel.currentScreen.value = AppScreen.MAIN
-                            appViewModel.currentBottomBarSelected.value = AppBarPage.MAIN
+                if (!appViewModel.isLogin.stateValue()) {
+                    if (loginViewModel.state.stateValue() != LoadingState.NotStarted) {
+                        if (loginViewModel.state.stateValue() == LoadingState.Loading) {
+                            LoadingScreen()
+                        } else when (loginViewModel.state.stateValue()) {
+                            LoadingState.Success -> {
+                                appViewModel.isLogin.value = true
+                                appViewModel.currentScreen.value = AppScreen.MAIN
+                                appViewModel.currentBottomBarSelected.value = AppBarPage.MAIN
+                            }
+
+                            is LoadingState.Failed -> {
+                                loginViewModel.state.value = LoadingState.NotStarted
+                            }
+
+                            else -> {
+                                loginViewModel.state.value = LoadingState.NotStarted
+                            }
                         }
-                        is LoadingState.Failed -> {
-                            loginViewModel.state.value = LoadingState.NotStarted
-                        }
-                        else -> {
-                            loginViewModel.state.value = LoadingState.NotStarted
+                    } else if (participantRegistrationViewModel.sendingState.stateValue() != LoadingState.NotStarted) {
+                        if (participantRegistrationViewModel.sendingState.stateValue() == LoadingState.Loading) {
+                            LoadingScreen()
+                        } else when (participantRegistrationViewModel.sendingState.stateValue()) {
+                            LoadingState.Success -> {
+                                appViewModel.isLogin.value = true
+                                appViewModel.currentScreen.value = AppScreen.MAIN
+                                appViewModel.currentBottomBarSelected.value = AppBarPage.MAIN
+                            }
+
+                            is LoadingState.Failed -> {
+                                participantRegistrationViewModel.sendingState.value = LoadingState.NotStarted
+                            }
+
+                            else -> {
+                                participantRegistrationViewModel.sendingState.value = LoadingState.NotStarted
+                            }
                         }
                     }
                 }
-                else if (participantRegistrationViewModel.sendingState.stateValue() != LoadingState.NotStarted) {
-                    if (participantRegistrationViewModel.sendingState.stateValue() == LoadingState.Loading) {
-                        LoadingScreen()
+                println("SCREEN: " + appViewModel.currentScreen.stateValue())
+                when (appViewModel.currentScreen.stateValue()) {
+                    AppScreen.LOGIN -> LoginScreen(
+                        isDarkTheme, loginViewModel,
+                        onLogInClick = {
+                            loginViewModel.login()
+                        },
+                        onRegisterClick = {
+                            appViewModel.currentScreen.value = AppScreen.REG_STEP_1
+                        })
+
+                    AppScreen.REG_STEP_1 -> RegistrationStep1Screen(isDarkTheme, participantRegistrationViewModel) {
+                        appViewModel.currentScreen.value = AppScreen.REG_STEP_2
                     }
-                    else when (participantRegistrationViewModel.sendingState.stateValue()) {
-                        LoadingState.Success -> {
-                            appViewModel.currentScreen.value = AppScreen.MAIN
-                            appViewModel.currentBottomBarSelected.value = AppBarPage.MAIN
-                        }
-                        is LoadingState.Failed -> {
-                            participantRegistrationViewModel.sendingState.value = LoadingState.NotStarted
-                        }
-                        else -> {
-                            participantRegistrationViewModel.sendingState.value = LoadingState.NotStarted
-                        }
+
+                    AppScreen.REG_STEP_2 -> RegistrationStep2Screen(isDarkTheme, participantRegistrationViewModel) {
+                        appViewModel.currentScreen.value = AppScreen.REG_STEP_3
                     }
-                }
-                else {
-                    when (appViewModel.currentScreen.stateValue()) {
-                        AppScreen.LOGIN -> LoginScreen(
-                            isDarkTheme, loginViewModel,
-                            onLogInClick = {
-                                loginViewModel.login()
-                            },
-                            onRegisterClick = {
-                                appViewModel.currentScreen.value = AppScreen.REG_STEP_1
-                            })
-                        AppScreen.REG_STEP_1 -> RegistrationStep1Screen(isDarkTheme, participantRegistrationViewModel) {
-                            appViewModel.currentScreen.value = AppScreen.REG_STEP_2
-                        }
-                        AppScreen.REG_STEP_2 -> RegistrationStep2Screen(isDarkTheme, participantRegistrationViewModel) {
-                            appViewModel.currentScreen.value = AppScreen.REG_STEP_3
-                        }
-                        AppScreen.REG_STEP_3 -> RegistrationStep3Screen(isDarkTheme, participantRegistrationViewModel) {
-                            participantRegistrationViewModel.sendRegisterRequest()
-                        }
-                        AppScreen.ALL_CATEGORIES -> AllCategories(categoryViewModel)
-                        AppScreen.CREATE_EVENT -> TODO()
-                        AppScreen.Test -> TestScreen(httpKtorService)
-                        AppScreen.ALL_ORGANIZERS -> AllOrganizers(organizerViewModel)
-                        AppScreen.ACCOUNT -> TODO()
-                        AppScreen.MAIN -> TODO()
-                        AppScreen.EVENT -> TODO()
-                        AppScreen.INVITE_BY_ORGANIZER -> TODO()
-                        AppScreen.INVITE_BY_STUDENT -> TODO()
-                        AppScreen.MY_INVITES -> TODO()
-                        AppScreen.VISIT_CHECK -> TODO()
-                        AppScreen.VISIT_REQUESTS -> TODO()
+
+                    AppScreen.REG_STEP_3 -> RegistrationStep3Screen(isDarkTheme, participantRegistrationViewModel) {
+                        participantRegistrationViewModel.sendRegisterRequest()
                     }
+
+                    AppScreen.LOADING -> LoadingScreen()
+                    AppScreen.ALL_CATEGORIES -> AllCategories(categoryViewModel)
+                    AppScreen.CREATE_EVENT -> TODO()
+                    AppScreen.Test -> TestScreen(httpKtorService)
+                    AppScreen.ALL_ORGANIZERS -> AllOrganizers(organizerViewModel)
+                    AppScreen.ACCOUNT -> TODO()
+                    AppScreen.MAIN -> Main(mainViewModel = mainViewModel)
+                    AppScreen.EVENT -> Main(mainViewModel = mainViewModel)
+                    AppScreen.INVITE_BY_ORGANIZER -> TODO()
+                    AppScreen.INVITE_BY_STUDENT -> TODO()
+                    AppScreen.MY_INVITES -> TODO()
+                    AppScreen.VISIT_CHECK -> TODO()
+                    AppScreen.VISIT_REQUESTS -> TODO()
                 }
             }
         }
@@ -193,7 +211,12 @@ fun AppBottomBar(
     appViewModel: AppViewModel
 ) {
     NavigationBar(
-        containerColor = if (darkTheme) Color(red = 0, green = 0, blue = 0, alpha = 64) else Color(red = 255, green = 255, blue = 255, alpha = 64),
+        containerColor = if (darkTheme) Color(red = 0, green = 0, blue = 0, alpha = 64) else Color(
+            red = 255,
+            green = 255,
+            blue = 255,
+            alpha = 64
+        ),
     ) {
         for (item in AppBarPage.entries) {
             NavigationBarItem(
