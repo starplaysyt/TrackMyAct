@@ -168,10 +168,7 @@ fun RegistrationStep3Screen(
 ) {
     RegistrationWrapper(darkTheme,
         onClick = {
-            if (viewModel.fullNameField.value.trim().isNotEmpty() && viewModel.phoneField.value.trim().isNotEmpty() && viewModel.birthdayField.value.trim().isNotEmpty()) {
-                println("Pizdec")
-                onClick()
-            }
+            onClick()
         }
     ) {
         AppTextField(
