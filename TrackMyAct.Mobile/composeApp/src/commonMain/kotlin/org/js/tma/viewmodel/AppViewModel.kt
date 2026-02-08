@@ -19,6 +19,7 @@ class AppViewModel(private val httpKtorService: HttpKtorService): ViewModel() {
     val currentScreen by stateFlow(AppScreen.Test)
     val currentBottomBarSelected by stateFlow(AppBarPage.MAIN)
     val appState by stateFlow<LoadingState>(LoadingState.NotStarted)
+    val isLogin by stateFlow(false)
     private val service = AppService(httpKtorService)
 
     fun checkLogIn() {
@@ -27,6 +28,7 @@ class AppViewModel(private val httpKtorService: HttpKtorService): ViewModel() {
             try {
                 when (service.checkLogIn()) {
                     LoadingState.Authorized -> {
+                        isLogin.value = true
                         currentScreen.value = AppScreen.MAIN
                     }
                     LoadingState.Unauthorized -> {
